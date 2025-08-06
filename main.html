@@ -90,6 +90,17 @@
       font-size: 14px;
       cursor: pointer;
     }
+
+    .edit-button {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 16px;
+      height: 16px;
+      background-color: #000;
+      border-radius: 50%;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -114,6 +125,7 @@
     const textarea = document.getElementById('entryText');
     const colors = ['blood-red', 'vanilla', 'black-bean', 'drab-brown', 'cinereous'];
     const storageKey = 'entries';
+    let editIndex = null;
 
     function loadEntries() {
       const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
@@ -122,12 +134,24 @@
         const div = document.createElement('div');
         div.className = `entry ${colors[i % colors.length]}`;
         div.textContent = text;
+
+        // Edit button
+        const editBtn = document.createElement('div');
+        editBtn.className = 'edit-button';
+        editBtn.onclick = () => {
+          editIndex = i;
+          textarea.value = text;
+          popup.style.display = 'flex';
+        };
+
+        div.appendChild(editBtn);
         container.appendChild(div);
       });
     }
 
     function showPopup() {
       textarea.value = '';
+      editIndex = null;
       popup.style.display = 'flex';
     }
 
@@ -137,12 +161,24 @@
 
     function submitEntry() {
       const text = textarea.value.trim();
-      if (text === '') {
-        alert('Please enter something!');
-        return;
-      }
       const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
-      entries.push(text);
+
+      if (editIndex !== null) {
+        // Editing existing entry
+        if (text === '') {
+          entries.splice(editIndex, 1); // delete if empty
+        } else {
+          entries[editIndex] = text;
+        }
+      } else {
+        // Adding new entry
+        if (text === '') {
+          alert('Please enter something!');
+          return;
+        }
+        entries.push(text);
+      }
+
       localStorage.setItem(storageKey, JSON.stringify(entries));
       hidePopup();
       loadEntries();
