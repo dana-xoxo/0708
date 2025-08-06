@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shared Text Page</title>
+  <style>
+    body {
+      background-color: #f8c8dc; /* pale pink */
+      font-family: sans-serif;
+      color: black;
+      margin: 0;
+      padding: 20px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #entries {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #aaa;
+      padding: 10px;
+      background: white;
+    }
+    .entry {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #aaa;
+    }
+    .add-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px;
+      background-color: black;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="entries"></div>
+  <button class="add-button" onclick="addEntry()">+</button>
+
+  <script>
+    const storageKey = "userEntries";
+
+    function loadEntries() {
+      const container = document.getElementById("entries");
+      container.innerHTML = "";
+      const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
+      entries.forEach(text => {
+        const div = document.createElement("div");
+        div.className = "entry";
+        div.textContent = text;
+        container.appendChild(div);
+      });
+    }
+
+    function addEntry() {
+      const newText = prompt("Enter your message:");
+      if (newText) {
+        const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
+        entries.push(newText);
+        localStorage.setItem(storageKey, JSON.stringify(entries));
+        loadEntries();
+      }
+    }
+
+    window.onload = loadEntries;
+  </script>
+</body>
+</html>
