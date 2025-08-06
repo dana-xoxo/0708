@@ -6,115 +6,71 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Georgia', serif;
-      background-color: #fff;
-      overflow-y: scroll;
-    }
+    body { font-family: Georgia, serif; background: #fff; overflow-y: scroll; }
     header {
-      background-color: #101211;
-      color: #F4E3B2;
-      padding: 40px 20px;
-      text-align: center;
-      font-size: 2.5em;
-      font-style: italic;
-      font-weight: normal;
+      background: #101211; color: #F4E3B2;
+      padding: 40px 20px; text-align: center;
+      font-size: 2.5em; font-style: italic;
       font-family: 'Playfair Display', serif;
     }
-    #container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-    }
+    #container { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; padding: 20px; }
     .entry {
-      padding: 20px;
-      min-height: 150px;
-      font-size: 12px;
-      white-space: pre-wrap;
-      position: relative;
+      padding: 20px; min-height: 150px; font-size: 12px;
+      white-space: pre-wrap; position: relative; border-radius: 4px;
     }
-    .blood-red { background-color: #74070E; color: #F4E3B2; }
-    .vanilla { background-color: #F4E3B2; color: #74070E; }
-    .black-bean { background-color: #310E10; color: #F4E3B2; }
-    .drab-brown { background-color: #45462A; color: #F4E3B2; }
-    .cinereous { background-color: #947268; color: #74070E; }
+    .blood-red { background: #74070E; color: #F4E3B2; }
+    .vanilla { background: #F4E3B2; color: #74070E; }
+    .black-bean { background: #310E10; color: #F4E3B2; }
+    .drab-brown { background: #45462A; color: #F4E3B2; }
+    .cinereous { background: #947268; color: #74070E; }
 
     .add-button {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      background-color: #000044;
-      color: white;
-      border: none;
-      font-size: 20px;
-      line-height: 0;
-      cursor: pointer;
+      position: fixed; bottom: 20px; right: 20px;
+      width: 35px; height: 35px; border-radius: 50%;
+      background: #000044; color: white; border: none;
+      font-size: 20px; cursor: pointer; line-height: 0;
     }
 
-    /* Popup styles */
     .popup {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
       background: rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       z-index: 999;
     }
     .popup-inner {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      width: 80%;
-      max-width: 400px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      background: white; padding: 20px; border-radius: 10px;
+      width: 80%; max-width: 400px;
+      display: flex; flex-direction: column; gap: 10px;
     }
     .popup-inner textarea {
-      width: 100%;
-      height: 100px;
-      resize: vertical;
-      padding: 8px;
-      font-family: 'Georgia', serif;
-      font-size: 14px;
+      width: 100%; height: 120px;
+      resize: vertical; padding: 8px;
+      font-family: Georgia, serif; font-size: 14px;
     }
     .popup-inner button {
-      align-self: flex-end;
-      padding: 5px 10px;
-      font-size: 14px;
-      cursor: pointer;
+      align-self: flex-end; padding: 5px 10px;
+      font-size: 14px; cursor: pointer;
     }
-
     .edit-button {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      width: 16px;
-      height: 16px;
-      background-color: #000;
-      border-radius: 50%;
-      cursor: pointer;
+      position: absolute; bottom: 10px; right: 10px;
+      width: 16px; height: 16px; background: black;
+      border-radius: 50%; cursor: pointer;
     }
   </style>
 </head>
 <body>
   <header>Dana and Navya's Summer House</header>
   <div id="container"></div>
-  <button class="add-button" onclick="showPopup()">+</button>
+  <button class="add-button" onclick="openPopup()">+</button>
 
-  <div id="popup" class="popup" style="display: none;">
+  <div id="popup" class="popup" style="display:none;">
     <div class="popup-inner">
       <label for="entryText">Enter your paragraph:</label>
       <textarea id="entryText" placeholder="Type here..."></textarea>
       <div>
         <button onclick="submitEntry()">Submit</button>
-        <button onclick="hidePopup()">Cancel</button>
+        <button onclick="closePopup()">Cancel</button>
       </div>
     </div>
   </div>
@@ -123,68 +79,61 @@
     const container = document.getElementById('container');
     const popup = document.getElementById('popup');
     const textarea = document.getElementById('entryText');
-    const colors = ['blood-red', 'vanilla', 'black-bean', 'drab-brown', 'cinereous'];
-    const storageKey = 'entries';
+    const colors = ['blood-red','vanilla','black-bean','drab-brown','cinereous'];
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzoBhI0oytRtuY_NLxju3yXpOVd5MRu9REg0_-qt4xmssuGfdrfn32nXCTVwr8YZGhpcQ/exec';
     let editIndex = null;
 
-    function loadEntries() {
-      const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
-      container.innerHTML = '';
-      entries.forEach((text, i) => {
-        const div = document.createElement('div');
-        div.className = `entry ${colors[i % colors.length]}`;
-        div.textContent = text;
-
-        // Edit button
-        const editBtn = document.createElement('div');
-        editBtn.className = 'edit-button';
-        editBtn.onclick = () => {
-          editIndex = i;
-          textarea.value = text;
-          popup.style.display = 'flex';
-        };
-
-        div.appendChild(editBtn);
-        container.appendChild(div);
-      });
+    async function loadEntries(){
+      try {
+        const res = await fetch(scriptURL);
+        if (!res.ok) throw new Error(res.status);
+        const entries = await res.json();
+        container.innerHTML = '';
+        entries.forEach((text,i)=>{
+          const div = document.createElement('div');
+          div.className = `entry ${colors[i%colors.length]}`;
+          div.textContent = text;
+          const btn = document.createElement('div');
+          btn.className = 'edit-button';
+          btn.onclick = ()=>{ editIndex=i; textarea.value=text; openPopup(); };
+          div.appendChild(btn);
+          container.appendChild(div);
+        });
+      } catch(err){
+        console.error('Load error', err);
+        container.innerHTML = '<p style="grid-column:1/-1;color:red;text-align:center;">Failed to load entries.</p>';
+      }
     }
 
-    function showPopup() {
-      textarea.value = '';
-      editIndex = null;
+    function openPopup(){
+      textarea.value = editIndex!==null ? textarea.value : '';
       popup.style.display = 'flex';
     }
-
-    function hidePopup() {
-      popup.style.display = 'none';
+    function closePopup(){
+      popup.style.display = 'none'; editIndex = null;
     }
 
-    function submitEntry() {
+    async function submitEntry(){
       const text = textarea.value.trim();
-      const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
-
-      if (editIndex !== null) {
-        // Editing existing entry
-        if (text === '') {
-          entries.splice(editIndex, 1); // delete if empty
-        } else {
-          entries[editIndex] = text;
-        }
-      } else {
-        // Adding new entry
-        if (text === '') {
-          alert('Please enter something!');
-          return;
-        }
-        entries.push(text);
+      const payload = { text };
+      if (editIndex !== null) payload.editIndex = editIndex;
+      try {
+        const res = await fetch(scriptURL, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error(res.status);
+        closePopup();
+        editIndex = null;
+        loadEntries();
+      } catch(err){
+        console.error('Submit error', err);
+        alert('Failed to save.');
       }
-
-      localStorage.setItem(storageKey, JSON.stringify(entries));
-      hidePopup();
-      loadEntries();
     }
 
-    window.onload = loadEntries;
+    window.onload = () => { loadEntries(); };
   </script>
 </body>
 </html>
