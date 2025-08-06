@@ -5,7 +5,7 @@
   <style>
     body {
       margin: 0;
-      background-color: gold;
+      background-color: maroon;
       height: 100vh;
       display: flex;
       justify-content: center;
@@ -22,17 +22,22 @@
       padding: 10px;
       width: 200px;
       font-size: 16px;
+      background-color: black;
+      color: white;
+      border: none;
+      outline: none;
     }
     button {
       padding: 10px 15px;
       font-size: 16px;
       margin-left: 10px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="password-box">
-    <input type="password" id="password" placeholder="Enter password">
+    <input type="password" id="password" placeholder="Enter password" onkeydown="handleKey(event)">
     <button onclick="checkPassword()">Submit</button>
   </div>
   <script>
@@ -43,6 +48,12 @@
         window.location.href = "main.html";
       } else {
         alert("Wrong password");
+      }
+    }
+
+    function handleKey(event) {
+      if (event.key === "Enter") {
+        checkPassword();
       }
     }
   </script>
