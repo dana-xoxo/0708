@@ -45,18 +45,13 @@
     }
 
     .edit-btn {
-      width: 28px;
-      height: 28px;
+      width: 12px;
+      height: 12px;
       background-color: navy;
-      color: white;
       border: none;
       border-radius: 50%;
-      font-size: 16px;
-      font-weight: bold;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      margin-left: 10px;
     }
 
     .add-button {
@@ -79,7 +74,7 @@
   </style>
 </head>
 <body>
-  <h1>My Wall</h1>
+  <h1>Dana and Navya's Summer House</h1>
   <div id="entries"></div>
   <button class="add-button" onclick="addEntry()">+</button>
 
@@ -101,7 +96,7 @@
 
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
-        editBtn.innerHTML = "✏️";
+        editBtn.innerHTML = "";
         editBtn.onclick = () => editEntry(index);
 
         div.appendChild(span);
