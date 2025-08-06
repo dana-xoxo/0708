@@ -37,6 +37,7 @@
     .black-bean { background-color: #310E10; color: #F4E3B2; }
     .drab-brown { background-color: #45462A; color: #F4E3B2; }
     .cinereous { background-color: #947268; color: #74070E; }
+
     .add-button {
       position: fixed;
       bottom: 20px;
@@ -51,17 +52,68 @@
       line-height: 0;
       cursor: pointer;
     }
+
+    /* Popup styles */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    .popup-inner {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .popup-inner textarea {
+      width: 100%;
+      height: 100px;
+      resize: vertical;
+      padding: 8px;
+      font-family: 'Georgia', serif;
+      font-size: 14px;
+    }
+    .popup-inner button {
+      align-self: flex-end;
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <header>Dana and Navya's Summer House</header>
   <div id="container"></div>
-  <button class="add-button" onclick="addEntry()">+</button>
+  <button class="add-button" onclick="showPopup()">+</button>
+
+  <div id="popup" class="popup" style="display: none;">
+    <div class="popup-inner">
+      <label for="entryText">Enter your paragraph:</label>
+      <textarea id="entryText" placeholder="Type here..."></textarea>
+      <div>
+        <button onclick="submitEntry()">Submit</button>
+        <button onclick="hidePopup()">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const container = document.getElementById('container');
+    const popup = document.getElementById('popup');
+    const textarea = document.getElementById('entryText');
     const colors = ['blood-red', 'vanilla', 'black-bean', 'drab-brown', 'cinereous'];
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyEeq6jOViJq1QpClAK0VCFx8L9JFxuyeUs4ZEdsqwk5GmA0TvvoWBNulWvO7_EovTI/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby0KtP8L152Cij8naLdIDmRmnLl7yep_S8hJkSCpCh9htvvf64Cbs0lCv-IGRuopDk/exec';
 
     async function loadEntries() {
       try {
@@ -81,21 +133,34 @@
       }
     }
 
-    async function addEntry() {
-      const text = prompt("Enter your text:");
-      if (text && text.trim() !== '') {
-        try {
-          const res = await fetch(scriptURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: text.trim() })
-          });
-          if (!res.ok) throw new Error('Post failed: ' + res.status);
-          loadEntries();
-        } catch (err) {
-          console.error('Error adding entry:', err);
-          alert('Failed to add entry.');
-        }
+    function showPopup() {
+      textarea.value = '';
+      popup.style.display = 'flex';
+    }
+
+    function hidePopup() {
+      popup.style.display = 'none';
+    }
+
+    async function submitEntry() {
+      const text = textarea.value.trim();
+      if (text === '') {
+        alert('Please enter something!');
+        return;
+      }
+
+      try {
+        const res = await fetch(scriptURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        if (!res.ok) throw new Error('Post failed: ' + res.status);
+        hidePopup();
+        loadEntries();
+      } catch (err) {
+        console.error('Error adding entry:', err);
+        alert('Failed to add entry.');
       }
     }
 
