@@ -1,227 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Dana and Navya's Summer House</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom right, #fce4ec, #f8bbd0); /* soft sakura pink */
-      font-family: sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      font-family: 'Georgia', serif;
+      background-color: #fff;
+      overflow-y: scroll;
     }
 
-    .card {
-      background: white;
-      width: 90%;
-      max-width: 800px;
-      height: 90vh;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative;
-    }
-
-    h1 {
-      font-family: "Brush Script MT", cursive;
-      font-size: 40px;
-      font-weight: normal;
+    header {
+      background-color: #F4E3B2;
+      color: #74070E;
+      padding: 40px 20px;
       text-align: center;
-      margin: 20px;
+      font-size: 2.5em;
+      font-style: italic;
+      font-weight: normal;
     }
 
-    #entries {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background: white;
+    #container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 30px;
     }
 
     .entry {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #ddd;
+      padding: 20px;
+      min-height: 150px;
       white-space: pre-wrap;
+      font-size: 1.2em;
     }
 
-    .entry-text {
-      flex-grow: 1;
-      white-space: pre-wrap;
+    .blood-red {
+      background-color: #74070E;
+      color: #F4E3B2;
     }
 
-    .edit-btn {
-      width: 12px;
-      height: 12px;
-      background-color: navy;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      margin-left: 10px;
+    .vanilla {
+      background-color: #F4E3B2;
+      color: #74070E;
+    }
+
+    .black-bean {
+      background-color: #310E10;
+      color: #F4E3B2;
     }
 
     .add-button {
-      position: absolute;
-      bottom: 30px;
-      right: 30px;
-      width: 50px;
-      height: 50px;
-      background-color: black;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      font-size: 30px;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 0 8px rgba(0,0,0,0.3);
-    }
-
-    /* Modal styles */
-    #modal {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 400px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    textarea {
-      width: 100%;
-      height: 120px;
-      font-size: 14px;
-      padding: 10px;
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    .modal-actions button {
-      padding: 6px 12px;
-      border: none;
-      cursor: pointer;
-    }
-
-    .cancel-btn {
-      background-color: #ccc;
-    }
-
-    .ok-btn {
-      background-color: black;
+      bottom: 20px;
+      right: 20px;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: #000044;
       color: white;
+      border: none;
+      font-size: 28px;
+      line-height: 0;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Dana and Navya's Summer House</h1>
-    <div id="entries"></div>
-    <button class="add-button" onclick="openModal()">+</button>
-  </div>
 
-  <!-- Modal for adding/editing text -->
-  <div id="modal">
-    <div class="modal-content">
-      <textarea id="textInput" placeholder="Type your message..."></textarea>
-      <div class="modal-actions">
-        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
-        <button class="ok-btn" onclick="saveEntry()">Save</button>
-      </div>
-    </div>
-  </div>
+<header>Dana and Navya's Summer House</header>
 
-  <script>
-    const storageKey = "userEntries";
-    let isEditing = false;
-    let editIndex = null;
+<main id="container"></main>
+<button class="add-button" onclick="addEntry()">+</button>
 
-    function loadEntries() {
-      const container = document.getElementById("entries");
-      container.innerHTML = "";
+<script>
+  const container = document.getElementById('container');
+  const storageKey = "summerHouseEntries";
+  const bgClasses = ['blood-red', 'vanilla', 'black-bean'];
+
+  function loadEntries() {
+    const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
+    container.innerHTML = '';
+    entries.forEach((text, index) => {
+      const div = document.createElement('div');
+      div.className = `entry ${bgClasses[index % bgClasses.length]}`;
+      div.textContent = text;
+      container.appendChild(div);
+    });
+  }
+
+  function addEntry() {
+    const text = prompt("Enter your thoughts (you can use line breaks):");
+    if (text) {
       const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
-
-      entries.forEach((text, index) => {
-        const div = document.createElement("div");
-        div.className = "entry";
-
-        const span = document.createElement("span");
-        span.className = "entry-text";
-        span.textContent = text;
-
-        const editBtn = document.createElement("button");
-        editBtn.className = "edit-btn";
-        editBtn.onclick = () => openModal(true, index);
-
-        div.appendChild(span);
-        div.appendChild(editBtn);
-        container.appendChild(div);
-      });
-    }
-
-    function openModal(edit = false, index = null) {
-      document.getElementById("modal").style.display = "flex";
-      const input = document.getElementById("textInput");
-      isEditing = edit;
-      editIndex = index;
-
-      if (edit && index !== null) {
-        const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
-        input.value = entries[index];
-      } else {
-        input.value = "";
-      }
-    }
-
-    function closeModal() {
-      document.getElementById("modal").style.display = "none";
-      document.getElementById("textInput").value = "";
-      isEditing = false;
-      editIndex = null;
-    }
-
-    function saveEntry() {
-      const text = document.getElementById("textInput").value.trim();
-      if (!text) return;
-
-      const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
-      if (isEditing && editIndex !== null) {
-        entries[editIndex] = text;
-      } else {
-        entries.push(text);
-      }
+      entries.push(text);
       localStorage.setItem(storageKey, JSON.stringify(entries));
-      closeModal();
       loadEntries();
     }
+  }
 
-    window.onload = loadEntries;
-  </script>
+  window.onload = loadEntries;
+</script>
+
 </body>
 </html>
