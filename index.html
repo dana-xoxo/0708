@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Password Protected</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: gold;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+    }
+    .password-box {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    input[type="password"] {
+      padding: 10px;
+      width: 200px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="password-box">
+    <input type="password" id="password" placeholder="Enter password">
+    <button onclick="checkPassword()">Submit</button>
+  </div>
+  <script>
+    function checkPassword() {
+      const input = document.getElementById("password").value;
+      const correct = "07082003"; // Change this to your desired password
+      if (input === correct) {
+        window.location.href = "main.html";
+      } else {
+        alert("Wrong password");
+      }
+    }
+  </script>
+</body>
+</html>
