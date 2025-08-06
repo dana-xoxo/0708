@@ -4,14 +4,27 @@
   <title>Dana and Navya's Summer House</title>
   <style>
     body {
-      background-color: #ff9999; /* light red */
-      font-family: sans-serif;
-      color: black;
       margin: 0;
       padding: 0;
+      background: linear-gradient(to bottom right, #fce4ec, #f8bbd0); /* soft sakura pink */
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       height: 100vh;
+    }
+
+    .card {
+      background: white;
+      width: 90%;
+      max-width: 800px;
+      height: 90vh;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
+      overflow: hidden;
+      position: relative;
     }
 
     h1 {
@@ -19,15 +32,13 @@
       font-size: 40px;
       font-weight: normal;
       text-align: center;
-      margin: 20px 0 10px 0;
+      margin: 20px;
     }
 
     #entries {
       flex: 1;
       overflow-y: auto;
-      border: 1px solid #aaa;
       padding: 20px;
-      margin: 0 20px;
       background: white;
     }
 
@@ -37,7 +48,7 @@
       align-items: center;
       margin-bottom: 20px;
       padding-bottom: 10px;
-      border-bottom: 1px solid #aaa;
+      border-bottom: 1px solid #ddd;
       white-space: pre-wrap;
     }
 
@@ -57,7 +68,7 @@
     }
 
     .add-button {
-      position: fixed;
+      position: absolute;
       bottom: 30px;
       right: 30px;
       width: 50px;
@@ -129,9 +140,11 @@
   </style>
 </head>
 <body>
-  <h1>Dana and Navya's Summer House</h1>
-  <div id="entries"></div>
-  <button class="add-button" onclick="openModal()">+</button>
+  <div class="card">
+    <h1>Dana and Navya's Summer House</h1>
+    <div id="entries"></div>
+    <button class="add-button" onclick="openModal()">+</button>
+  </div>
 
   <!-- Modal for adding/editing text -->
   <div id="modal">
