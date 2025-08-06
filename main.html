@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Dana and Navya's Summer House</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
   <style>
@@ -38,6 +38,7 @@
       min-height: 150px;
       font-size: 12px;
       white-space: pre-wrap;
+      position: relative;
     }
 
     .blood-red {
@@ -55,6 +56,16 @@
       color: #F4E3B2;
     }
 
+    .drab-brown {
+      background-color: #45462A;
+      color: #F4E3B2;
+    }
+
+    .cinereous {
+      background-color: #947268;
+      color: #74070E;
+    }
+
     .add-button {
       position: fixed;
       bottom: 20px;
@@ -69,19 +80,28 @@
       line-height: 0;
       cursor: pointer;
     }
+
+    .edit-button {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: black;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <header>Dana and Navya's Summer House</header>
-
   <div id="container"></div>
-
   <button class="add-button" onclick="addEntry()">+</button>
 
   <script>
     const container = document.getElementById('container');
     const storageKey = 'entries';
-    const colors = ['blood-red', 'vanilla', 'black-bean'];
+    const colors = ['blood-red', 'vanilla', 'black-bean', 'drab-brown', 'cinereous'];
 
     function loadEntries() {
       const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
@@ -90,18 +110,39 @@
         const div = document.createElement('div');
         div.className = `entry ${colors[i % colors.length]}`;
         div.textContent = text;
+
+        // Add edit button
+        const editBtn = document.createElement('div');
+        editBtn.className = 'edit-button';
+        editBtn.onclick = () => editEntry(i);
+        div.appendChild(editBtn);
+
         container.appendChild(div);
       });
     }
 
     function addEntry() {
       const text = prompt("Enter your text:");
-      if (text) {
+      if (text && text.trim() !== '') {
         const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
         entries.push(text);
         localStorage.setItem(storageKey, JSON.stringify(entries));
         loadEntries();
       }
+    }
+
+    function editEntry(index) {
+      const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
+      const updatedText = prompt("Edit your text:", entries[index]);
+      if (updatedText === null) return; // cancel pressed
+      if (updatedText.trim() === '') {
+        // delete the entry
+        entries.splice(index, 1);
+      } else {
+        entries[index] = updatedText;
+      }
+      localStorage.setItem(storageKey, JSON.stringify(entries));
+      loadEntries();
     }
 
     window.onload = loadEntries;
