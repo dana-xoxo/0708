@@ -100,49 +100,49 @@
 
   <script>
     const container = document.getElementById('container');
+    const storageKey = 'entries';
     const colors = ['blood-red', 'vanilla', 'black-bean', 'drab-brown', 'cinereous'];
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxoGAnVSkW17qI0SMrkx2y4Yu5SaO_zfoZKgko6SqhiTP6fF5Jian8ai7548FfFRA4/exec';
 
     function loadEntries() {
-      fetch(scriptURL)
-        .then(res => res.json())
-        .then(data => {
-          container.innerHTML = '';
-          data.forEach((entry, i) => {
-            const div = document.createElement('div');
-            div.className = `entry ${colors[i % colors.length]}`;
-            div.textContent = entry.content;
+      const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
+      container.innerHTML = '';
+      entries.forEach((text, i) => {
+        const div = document.createElement('div');
+        div.className = `entry ${colors[i % colors.length]}`;
+        div.textContent = text;
 
-            const editBtn = document.createElement('div');
-            editBtn.className = 'edit-button';
-            editBtn.onclick = () => editEntry(entry.id, entry.content);
-            div.appendChild(editBtn);
+        // Add edit button
+        const editBtn = document.createElement('div');
+        editBtn.className = 'edit-button';
+        editBtn.onclick = () => editEntry(i);
+        div.appendChild(editBtn);
 
-            container.appendChild(div);
-          });
-        });
+        container.appendChild(div);
+      });
     }
 
     function addEntry() {
       const text = prompt("Enter your text:");
-      if (!text || text.trim() === '') return;
-
-      fetch(scriptURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: text.trim() })
-      }).then(loadEntries);
+      if (text && text.trim() !== '') {
+        const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
+        entries.push(text);
+        localStorage.setItem(storageKey, JSON.stringify(entries));
+        loadEntries();
+      }
     }
 
-    function editEntry(id, currentText) {
-      const updated = prompt("Edit your text:", currentText);
-      if (updated === null) return;
-
-      fetch(scriptURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, content: updated.trim() })
-      }).then(loadEntries);
+    function editEntry(index) {
+      const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
+      const updatedText = prompt("Edit your text:", entries[index]);
+      if (updatedText === null) return; // cancel pressed
+      if (updatedText.trim() === '') {
+        // delete the entry
+        entries.splice(index, 1);
+      } else {
+        entries[index] = updatedText;
+      }
+      localStorage.setItem(storageKey, JSON.stringify(entries));
+      loadEntries();
     }
 
     window.onload = loadEntries;
