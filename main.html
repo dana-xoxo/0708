@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dana and Navya's Summer House</title>
+  <title>My Wall</title>
   <style>
     body {
-      background-color: #f8c8dc; /* pale pink */
+      background-color: #f4cccc; /* pale red */
       font-family: sans-serif;
       color: black;
       margin: 0;
@@ -17,6 +17,7 @@
     h1 {
       font-family: "Brush Script MT", cursive;
       font-size: 40px;
+      font-weight: normal; /* removes bold */
       text-align: center;
       margin: 20px 0 10px 0;
     }
@@ -44,14 +45,18 @@
     }
 
     .edit-btn {
-      background-color: black;
+      width: 28px;
+      height: 28px;
+      background-color: navy;
       color: white;
       border: none;
-      padding: 5px 10px;
-      font-size: 14px;
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
-      border-radius: 4px;
-      margin-left: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .add-button {
@@ -74,7 +79,7 @@
   </style>
 </head>
 <body>
-  <h1>Dana and Navya's Summer House</h1>
+  <h1>My Wall</h1>
   <div id="entries"></div>
   <button class="add-button" onclick="addEntry()">+</button>
 
@@ -96,7 +101,7 @@
 
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
-        editBtn.textContent = "Edit";
+        editBtn.innerHTML = "✏️";
         editBtn.onclick = () => editEntry(index);
 
         div.appendChild(span);
