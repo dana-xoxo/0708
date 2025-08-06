@@ -3,37 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <title>Dana and Navya's Summer House</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
   <style>
-    body {
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
       font-family: 'Georgia', serif;
       background-color: #fff;
       overflow-y: scroll;
     }
 
     header {
-      background-color: #F4E3B2;
-      color: #74070E;
+      background-color: #101211; /* Carbon Powder */
+      color: #F4E3B2; /* Vanilla */
       padding: 40px 20px;
       text-align: center;
       font-size: 2.5em;
       font-style: italic;
       font-weight: normal;
+      font-family: 'Playfair Display', serif;
     }
 
     #container {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      padding: 30px;
     }
 
     .entry {
       padding: 20px;
       min-height: 150px;
+      font-size: 12px;
       white-space: pre-wrap;
-      font-size: 1.2em;
     }
 
     .blood-red {
@@ -55,53 +59,52 @@
       position: fixed;
       bottom: 20px;
       right: 20px;
-      width: 45px;
-      height: 45px;
+      width: 35px;
+      height: 35px;
       border-radius: 50%;
       background-color: #000044;
       color: white;
       border: none;
-      font-size: 28px;
+      font-size: 20px;
       line-height: 0;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
+  <header>Dana and Navya's Summer House</header>
 
-<header>Dana and Navya's Summer House</header>
+  <div id="container"></div>
 
-<main id="container"></main>
-<button class="add-button" onclick="addEntry()">+</button>
+  <button class="add-button" onclick="addEntry()">+</button>
 
-<script>
-  const container = document.getElementById('container');
-  const storageKey = "summerHouseEntries";
-  const bgClasses = ['blood-red', 'vanilla', 'black-bean'];
+  <script>
+    const container = document.getElementById('container');
+    const storageKey = 'entries';
+    const colors = ['blood-red', 'vanilla', 'black-bean'];
 
-  function loadEntries() {
-    const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
-    container.innerHTML = '';
-    entries.forEach((text, index) => {
-      const div = document.createElement('div');
-      div.className = `entry ${bgClasses[index % bgClasses.length]}`;
-      div.textContent = text;
-      container.appendChild(div);
-    });
-  }
-
-  function addEntry() {
-    const text = prompt("Enter your thoughts (you can use line breaks):");
-    if (text) {
+    function loadEntries() {
       const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
-      entries.push(text);
-      localStorage.setItem(storageKey, JSON.stringify(entries));
-      loadEntries();
+      container.innerHTML = '';
+      entries.forEach((text, i) => {
+        const div = document.createElement('div');
+        div.className = `entry ${colors[i % colors.length]}`;
+        div.textContent = text;
+        container.appendChild(div);
+      });
     }
-  }
 
-  window.onload = loadEntries;
-</script>
+    function addEntry() {
+      const text = prompt("Enter your text:");
+      if (text) {
+        const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
+        entries.push(text);
+        localStorage.setItem(storageKey, JSON.stringify(entries));
+        loadEntries();
+      }
+    }
 
+    window.onload = loadEntries;
+  </script>
 </body>
 </html>
