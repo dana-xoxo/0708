@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My Wall</title>
+  <title>Dana and Navya's Summer House</title>
   <style>
     body {
-      background-color: #f4cccc; /* pale red */
+      background-color: #ff9999; /* light red */
       font-family: sans-serif;
       color: black;
       margin: 0;
@@ -17,7 +17,7 @@
     h1 {
       font-family: "Brush Script MT", cursive;
       font-size: 40px;
-      font-weight: normal; /* removes bold */
+      font-weight: normal;
       text-align: center;
       margin: 20px 0 10px 0;
     }
@@ -27,7 +27,7 @@
       overflow-y: auto;
       border: 1px solid #aaa;
       padding: 20px;
-      margin: 0 20px 0 20px;
+      margin: 0 20px;
       background: white;
     }
 
@@ -38,10 +38,12 @@
       margin-bottom: 20px;
       padding-bottom: 10px;
       border-bottom: 1px solid #aaa;
+      white-space: pre-wrap;
     }
 
     .entry-text {
       flex-grow: 1;
+      white-space: pre-wrap;
     }
 
     .edit-btn {
@@ -71,15 +73,81 @@
       align-items: center;
       box-shadow: 0 0 8px rgba(0,0,0,0.3);
     }
+
+    /* Modal styles */
+    #modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      font-size: 14px;
+      padding: 10px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .modal-actions button {
+      padding: 6px 12px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .cancel-btn {
+      background-color: #ccc;
+    }
+
+    .ok-btn {
+      background-color: black;
+      color: white;
+    }
   </style>
 </head>
 <body>
   <h1>Dana and Navya's Summer House</h1>
   <div id="entries"></div>
-  <button class="add-button" onclick="addEntry()">+</button>
+  <button class="add-button" onclick="openModal()">+</button>
+
+  <!-- Modal for adding/editing text -->
+  <div id="modal">
+    <div class="modal-content">
+      <textarea id="textInput" placeholder="Type your message..."></textarea>
+      <div class="modal-actions">
+        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        <button class="ok-btn" onclick="saveEntry()">Save</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const storageKey = "userEntries";
+    let isEditing = false;
+    let editIndex = null;
 
     function loadEntries() {
       const container = document.getElementById("entries");
@@ -96,8 +164,7 @@
 
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
-        editBtn.innerHTML = "";
-        editBtn.onclick = () => editEntry(index);
+        editBtn.onclick = () => openModal(true, index);
 
         div.appendChild(span);
         div.appendChild(editBtn);
@@ -105,24 +172,40 @@
       });
     }
 
-    function addEntry() {
-      const newText = prompt("Enter your message:");
-      if (newText) {
+    function openModal(edit = false, index = null) {
+      document.getElementById("modal").style.display = "flex";
+      const input = document.getElementById("textInput");
+      isEditing = edit;
+      editIndex = index;
+
+      if (edit && index !== null) {
         const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
-        entries.push(newText);
-        localStorage.setItem(storageKey, JSON.stringify(entries));
-        loadEntries();
+        input.value = entries[index];
+      } else {
+        input.value = "";
       }
     }
 
-    function editEntry(index) {
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+      document.getElementById("textInput").value = "";
+      isEditing = false;
+      editIndex = null;
+    }
+
+    function saveEntry() {
+      const text = document.getElementById("textInput").value.trim();
+      if (!text) return;
+
       const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
-      const updated = prompt("Edit your message:", entries[index]);
-      if (updated !== null && updated.trim() !== "") {
-        entries[index] = updated.trim();
-        localStorage.setItem(storageKey, JSON.stringify(entries));
-        loadEntries();
+      if (isEditing && editIndex !== null) {
+        entries[editIndex] = text;
+      } else {
+        entries.push(text);
       }
+      localStorage.setItem(storageKey, JSON.stringify(entries));
+      closeModal();
+      loadEntries();
     }
 
     window.onload = loadEntries;
